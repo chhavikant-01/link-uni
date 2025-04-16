@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux"
 import { Link, useNavigate } from "react-router-dom"
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "../components/ui/alert-dialog"
 import PDFViewer from "../components/Preview/PDFViewer"
+import AISummaryButton from "../components/aiSummary"
 export default function Dossier() {
   const navigate = useNavigate();
   const [postId, setPostId] = useState('');
@@ -59,7 +60,9 @@ export default function Dossier() {
         return toast.error(data.message);
       }
 
-      dispatch(updateSuccess(data.rest));
+      const updatedUser = {...user, savedPosts: data.data.savedPosts};
+    
+      dispatch(updateSuccess(updatedUser));
       setSaved(!saved);
       return toast.success(data.message);
     } catch (err) {
@@ -67,6 +70,10 @@ export default function Dossier() {
       return toast.error(err.message);
     }
   }
+
+  useEffect(() => {
+    console.log(post);
+  }, [post]);
 
   const handleLike = async () => {
     try {
@@ -86,12 +93,12 @@ export default function Dossier() {
       }
       if(res.ok){
         setLiked(!liked);
-        if(data.offset === 1){
-          dispatch(updatePostLikes({postId: post._id, userId: user._id, offset: 1}));
+        if(data.data === 1){
+          dispatch(updatePostLikes({postId: post._id, userId: user.userId, offset: 1}));
           return toast(data.message, {icon: '🥳'});
         }
-        if(data.offset === -1){
-          dispatch(updatePostLikes({postId: post._id, userId: user._id, offset: -1}));
+        if(data.data === -1){
+          dispatch(updatePostLikes({postId: post._id, userId: user.userId, offset: -1}));
           return toast(data.message, {icon: '🥹' });
         }
       }
@@ -136,7 +143,7 @@ export default function Dossier() {
         return toast.error('Failed to preview file');
       }
       const data = await response.json();
-      setPreviewUrl(data.signedUrl);
+      setPreviewUrl(data.data.signedUrl);
       setIsPreviewing(true);
     }catch(e){
       return toast.error(e.message);
@@ -151,7 +158,7 @@ export default function Dossier() {
     } else {
       setSaved(false);
     }
-    if (user && post?.likes.includes(user._id)) {
+    if (user && post?.likes.includes(user.userId)) {
       setLiked(true);
     } else {
       setLiked(false);
@@ -251,9 +258,18 @@ export default function Dossier() {
                   Download
                 </Button>
                 {post && post.fileType==="application/pdf" && 
-                <Button size="sm" className="bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-500/50 hover:shadow-blue-600/50 transition-shadow duration-300 px-4 py-2 rounded-lg" onClick={handleFilePreview} >
+                <Button size="sm" className="px-4 py-2 rounded-lg transition-colors duration-200 border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white bg-transperant" onClick={handleFilePreview} >
                   Preview
                 </Button>}
+                <AISummaryButton
+                  documentId={post?._id}
+                  documentTitle={post?.title}
+                  hasSummary={true}
+                  summary={post?.summary}
+                  onGenerateSummary={() => {
+                    return Promise.resolve(post?.summary);
+                  }}
+                />
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="destructive" size="sm" disabled={loading}>

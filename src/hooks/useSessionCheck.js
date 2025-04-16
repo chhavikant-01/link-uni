@@ -12,7 +12,7 @@ export const useSessionCheck = () => {
     // Verify both token and user data validity
     const verifySession = useCallback(async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/auth`, {
+            const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/auth/`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -22,7 +22,7 @@ export const useSessionCheck = () => {
             const data = await response.json();
             
             // Verify if the logged-in user matches the stored user
-            if (currentUser && data.userId !== currentUser._id) {
+            if (currentUser && data.data.userId !== currentUser.userId) {
                 throw new Error('User session mismatch');
             }
             
@@ -69,7 +69,7 @@ export const useSessionCheck = () => {
     // Return authentication status and user validity
     return {
         isAuthenticated: !!currentUser,
-        isValidUser: !!(currentUser && currentUser._id),
+        isValidUser: !!(currentUser && currentUser.userId),
         currentUser
     };
 };

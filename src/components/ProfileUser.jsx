@@ -21,8 +21,8 @@ const ProfileUser = () => {
   const [password, setPassword] = useState("");
   const [editField, setEditField] = useState(null);
   const [currentPassword, setCurrentPassword] = useState("");
-  const [shareSpaceUsername, setShareSpaceUsername] = useState(currentUser.shareSpaceProfile?.username || "");
-  const [shareSpaceProfile, setShareSpaceProfile] = useState(currentUser.shareSpaceProfile?.profileType || "");
+  const [shareSpaceUsername, setShareSpaceUsername] = useState(currentUser.professionalProfile || "");
+  const [shareSpaceProfile, setShareSpaceProfile] = useState(currentUser.professionalProfileType || "");
 
 
   const userData = [
@@ -57,7 +57,7 @@ const ProfileUser = () => {
         dispatch(updateFailure(data.message));
         toast.error(data.message);
       } else {
-        dispatch(updateSuccess(data.rest));
+        dispatch(updateSuccess(data.data));
         toast.success("Profile updated successfully");
       }
     } catch (e) {
@@ -100,7 +100,7 @@ const ProfileUser = () => {
     if (!res.ok) {
       return toast.error(data.message);
     } else {
-      const newUser = {...currentUser, shareSpaceProfile: data.profile}
+      const newUser = {...currentUser, professionalProfileType: data.data.professionalProfileType}
       dispatch(updateSuccess(newUser))
       return toast.success("Profile updated successfully");
     }
@@ -119,7 +119,7 @@ const ProfileUser = () => {
     if (!res.ok) {
       return toast.error(data.message);
     } else {
-      const newUser = {...currentUser, shareSpaceProfile: data.profile}
+      const newUser = {...currentUser, professionalProfile: data.data.professionalProfile}
       dispatch(updateSuccess(newUser))
       setEditField("")
       return toast.success("Profile updated successfully");

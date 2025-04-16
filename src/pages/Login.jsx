@@ -54,7 +54,7 @@ export const Login = () => {
         return toast.error(data.message);
       }
       if(res.ok) {
-        dispatch(signInSuccess(data.rest));
+        dispatch(signInSuccess(data.data.user));
         toast.success(data.message);
         navigate("/");
       }

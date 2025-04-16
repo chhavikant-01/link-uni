@@ -101,9 +101,9 @@ export default function Upload() {
           throw new Error(data.message); // This will trigger the error toast
         }
   
-        let newPost = data.newPost;
+        let newPost = data.data;
         newPost.author = {
-          _id: currentUser._id,
+          _id: currentUser.userId,
           username: currentUser.username,
           name: `${currentUser.firstname} ${currentUser.lastname}`,
           profilePicture: currentUser.profilePicture,

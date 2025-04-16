@@ -36,7 +36,7 @@ const HomeCard = (props) => {
     } else {
       setIsSaved(false);
     }
-    if (currentUser && props.likedBy.includes(currentUser._id)) {
+    if (currentUser && props.likedBy.includes(currentUser.userId)) {
       setIsLiked(true);
     }else{
       setIsLiked(false);
@@ -71,7 +71,9 @@ const HomeCard = (props) => {
         return toast.error(data.message);
       }
 
-      dispatch(updateSuccess(data.rest));
+      const updatedUser = { ...currentUser, savedPosts: data.data.savedPosts };
+
+      dispatch(updateSuccess(updatedUser));
       setIsSaved(!isSaved);
       return toast.success(data.message);
     } catch (err) {
@@ -98,13 +100,13 @@ const HomeCard = (props) => {
       }
       if(res.ok){
         setIsLiked(!isLiked);
-        if(data.offset === 1){
-          dispatch(updatePostLikes({postId: props._id, userId: currentUser._id, offset: 1}));
+        if(data.data === 1){
+          dispatch(updatePostLikes({postId: props._id, userId: currentUser.userId, offset: 1}));
           setNumberOfLikes(prevLikes => prevLikes + 1);
           return toast(data.message, {icon: '🥳'});
         }
-        if(data.offset === -1){
-          dispatch(updatePostLikes({postId: props._id, userId: currentUser._id, offset: -1}));
+        if(data.data === -1){
+          dispatch(updatePostLikes({postId: props._id, userId: currentUser.userId, offset: -1}));
           setNumberOfLikes(prevLikes => prevLikes - 1);
           return toast(data.message, {icon: '🥹' });
         }

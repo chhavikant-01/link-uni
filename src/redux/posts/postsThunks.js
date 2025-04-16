@@ -11,7 +11,7 @@ export const fetchPosts = () => async (dispatch) => {
           credentials: 'include',
         });
     const data = await response.json();
-    dispatch(setPosts(data));
+    dispatch(setPosts(data.data));
     dispatch(setStatus('succeeded'));
   } catch (error) {
     dispatch(setError(error.toString()));

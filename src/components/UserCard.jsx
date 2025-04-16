@@ -11,13 +11,13 @@ export default function UserCard(props) {
   const dispatch = useDispatch()  
   const currentUser = useSelector((state)=> state.user.currentUser);
   const currentPosts = useSelector((state)=> state.posts.posts);
-  const shareSpaceUsername = props.user?.shareSpaceProfile?.username
-  const shareSpaceProfileType = props.user?.shareSpaceProfile?.profileType
+  const shareSpaceUsername = props.user?.professionalProfile
+  const shareSpaceProfileType = props.user?.professionalProfileType
 
   const handleFollow = async() =>{
         try{
           dispatch(updateStart());
-          const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/user/${props.user._id}/follow`, {
+          const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/user/${props.user.userId}/follow`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
@@ -29,7 +29,7 @@ export default function UserCard(props) {
             toast(data.message, {icon: "😫"})
           }
           if(response.ok){
-            const updatedUser = {...currentUser, followings: [...currentUser.followings, props.user._id]}
+            const updatedUser = {...currentUser, followings: [...currentUser.followings, props.user.userId]}
             const updatedPosts = updatePostUserFollowers(1);
             dispatch(updatePosts(updatedPosts));
             dispatch(updateSuccess(updatedUser));
@@ -44,7 +44,7 @@ export default function UserCard(props) {
   const handleUnfollow = async() =>{
       try{
         dispatch(updateStart());
-        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/user/${props.user._id}/unfollow`, {
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/user/${props.user.userId}/unfollow`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -55,7 +55,7 @@ export default function UserCard(props) {
         if(!response.ok){
             toast(data.message, {icon: "😫"});}
         if(response.ok){
-          const updatedUser = {...currentUser, followings: currentUser.followings.filter(id => id !== props.user._id)}
+          const updatedUser = {...currentUser, followings: currentUser.followings.filter(id => id !== props.user.userId)}
           const updatedPosts = updatePostUserFollowers(-1);
           dispatch(updatePosts(updatedPosts));
           dispatch(updateSuccess(updatedUser));
@@ -68,7 +68,7 @@ export default function UserCard(props) {
 }
   const updatePostUserFollowers = (offset) => {
     const updatedPosts = currentPosts.map(post => {
-      if (post.author._id === props.user._id) {
+      if (post.author.userId === props.user.userId) {
         const updatedAuthor = {
           ...post.author,
           numberOfFollowers: post.author.numberOfFollowers + offset
@@ -115,10 +115,10 @@ export default function UserCard(props) {
               <div className="text-sm text-muted-foreground">Followers</div>
             </div>
           </div>
-          {!currentUser?.followings?.includes(props.user?._id) && <Button variant="" onClick={handleFollow} className="w-full">
+          {!currentUser?.followings?.includes(props.user?.userId) && <Button variant="" onClick={handleFollow} className="w-full">
             Follow
           </Button>}
-          {currentUser?.followings?.includes(props.user?._id) && <Button variant="outline" onClick={handleUnfollow} className="w-full">
+          {currentUser?.followings?.includes(props.user?.userId) && <Button variant="outline" onClick={handleUnfollow} className="w-full">
             Unollow
           </Button>}
           

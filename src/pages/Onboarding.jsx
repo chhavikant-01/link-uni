@@ -41,7 +41,7 @@ export default function OnboardingPage() {
     const data = await res.json()
     if (res.ok) {
       setLoading(false)
-      dispatch(updateSuccess(data.user))
+      dispatch(updateSuccess(data.data))
     } else {
       setLoading(false)
       return toast.error('An error occurred. Please try again.')

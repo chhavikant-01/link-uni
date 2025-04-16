@@ -27,12 +27,12 @@ const PostCard = (props) => {
       } else {
         setIsSaved(false);
       }
-      if (currentUser && props.likedBy.includes(currentUser._id)) {
+      if (currentUser && props.likedBy.includes(currentUser.userId)) {
         setIsLiked(true);
       }else{
         setIsLiked(false);
       }
-    }, [currentUser, props._id, props.likedBy]);
+    }, [currentUser, props._id, props.likes]);
 
     const handleSave = async () => {
         try {
@@ -54,8 +54,10 @@ const PostCard = (props) => {
             dispatch(updateFailure(data.message));
             return toast.error(data.message);
           }
+
+          const updatedUser = {...currentUser, savedPosts: data.data.savedPosts};
     
-          dispatch(updateSuccess(data.rest));
+          dispatch(updateSuccess(updatedUser));
           setIsSaved(!isSaved);
           return toast.success(data.message);
         } catch (err) {
@@ -82,13 +84,13 @@ const PostCard = (props) => {
           }
           if(res.ok){
             setIsLiked(!isLiked);
-            if(data.offset === 1){
-              dispatch(updatePostLikes({postId: props._id, userId: currentUser._id, offset: 1}));
+            if(data.data === 1){
+              dispatch(updatePostLikes({postId: props._id, userId: currentUser.userId, offset: 1}));
               setNumberOfLikes(prevLikes => prevLikes + 1);
               return toast(data.message, {icon: '🥳'});
             }
-            if(data.offset === -1){
-              dispatch(updatePostLikes({postId: props._id, userId: currentUser._id, offset: -1}));
+            if(data.data === -1){
+              dispatch(updatePostLikes({postId: props._id, userId: currentUser.userId, offset: -1}));
               setNumberOfLikes(prevLikes => prevLikes - 1);
               return toast(data.message, {icon: '🥹' });
             }
@@ -100,7 +102,8 @@ const PostCard = (props) => {
 
       let formattedDate = 'Invalid date';
       try {
-        formattedDate = formatDistanceToNow(new Date(props.uploadedAt), { addSuffix: true });
+        const uploadTime = new Date(props.uploadedAt + 'Z'); // Adding Z forces UTC interpretation
+        formattedDate = formatDistanceToNow(uploadTime, { addSuffix: true });
       } catch (e) {
         console.error('Invalid date value:', props.uploadedAt);
       }

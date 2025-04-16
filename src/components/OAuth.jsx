@@ -34,7 +34,8 @@ export default function OAuth() {
 
             if (res.ok) {
                 setLoading(false);
-                dispatch(signInSuccess(data.rest));
+                console.log(data.data.user);
+                dispatch(signInSuccess(data.data.user));
                 navigate('/');
             } else {
                 // If the response is not OK, delete the user from Firebase Authentication

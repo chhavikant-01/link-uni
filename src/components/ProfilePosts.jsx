@@ -15,13 +15,14 @@ export default function ProfilePosts() {
 
     try{
       setLoading(true);
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/posts/all-post/${user._id}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/posts/all-post/${user.userId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         }
       })
-      const posts = await response.json();
+      const data = await response.json();
+      const posts = data.data;
       setUserPosts(posts);
       setLoading(false);
     }catch(error){
@@ -55,13 +56,11 @@ export default function ProfilePosts() {
                 key={post._id}
                 _id={post._id}
                 author={post.author}
-                likes={post.likes.length}
-                likedBy={post.likes}
-                comments={post.comments.length}
+                likes={post.likes.length || 0}
+                likedBy={post.likes || []}
                 title={post.title}
                 program={post.category.program}
                 description={post.desc}
-                thumbnail={post.thumbnail}
                 course={post.category.course}
                 category={post.category.resourceType}
                 uploadedAt={post.createdAt} />

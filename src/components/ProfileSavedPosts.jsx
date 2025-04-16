@@ -11,20 +11,21 @@ export default function ProfileSavedPosts() {
   const fetchUserPosts = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/posts/saved/${user._id}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/posts/saved/${user.userId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         }
       });
-      const posts = await response.json();
+      const data = await response.json();
+      const posts = data.data;
       setSavedPosts(posts);
       setLoading(false);
     } catch(error) {
       setLoading(false);
       console.log(error);
     }
-  }, [user._id]);
+  }, [user.userId]);
   
   useEffect(() => {
     fetchUserPosts();
@@ -51,15 +52,13 @@ export default function ProfileSavedPosts() {
                   key={post._id}
                   _id={post._id}
                   author={post.author}
-                  likes={post.likes.length}
-                  likedBy={post.likes}
-                  comments={post.comments.length}
+                  likes={post.likes.length || 0}
+                  likedBy={post.likes || []}
                   title={post.title}
                   program={post.category.program}
                   description={post.desc}
                   course={post.category.course}
                   resourceType={post.category.resourceType}
-                  thumbnail={post.thumbnail}
                   uploadedAt={post.createdAt}
                 />
       ) )}

@@ -15,7 +15,7 @@ export default function UserFollowing() {
     const getFollowingsInfo = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BASE_URL}/api/v1/user/${currentUser._id}/connections?connection=followings`,
+          `${process.env.REACT_APP_BASE_URL}/api/v1/user/${currentUser.userId}/connections?connection=followings`,
           {
             method: "GET",
             headers: {
@@ -28,7 +28,7 @@ export default function UserFollowing() {
         if (!response.ok) {
           console.log(data.message);
         } else {
-          setFollowings(data.users);
+          setFollowings(data.data);
         }
       } catch (error) {
         console.log(error);
@@ -38,7 +38,7 @@ export default function UserFollowing() {
     if (tab === "following") {
       getFollowingsInfo();
     }
-  }, [location.search, currentUser._id, tab]); 
+  }, [location.search, currentUser.userId, tab]); 
 
   return (
     <section className="w-full">

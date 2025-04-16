@@ -76,9 +76,9 @@ export default function FilterBar() {
             program: selectedProgram
           })
         })
-        const posts = await res.json()
+        const data = await res.json()
         dispatch(setStatus('succeeded'))
-        dispatch(setPosts(posts))
+        dispatch(setPosts(data.data))
       }catch(err){
         dispatch(setStatus('failed'))
         dispatch(setError(err.message))
